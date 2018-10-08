@@ -11,9 +11,9 @@ def manifold_net(input_x):
 
 	x_flatten = tf.contrib.layer.flatten(input_x)
 	output_size = np.int(input_x.shape[1],input_x.shape[2])
-	fc1 = tf.tanh(tf.layers.dense(x_flatten,output_size))
+	fc1 = tf.tanh(tf.layers.dense(x_flatten,output_size * 2))
 	fc2 = tf.tanh(tf.layers.dense(fc1,output_size))
-	fcm = tf.reshape(fc2, [tf.shape(x)[0], tf.shape(x)[1], tf.shape(x)[2], 1])
+	fcm = tf.reshape(fc2, [tf.shape(input_x)[0], tf.shape(input_x)[1], tf.shape(input_x)[2], 1])
 
 	conv_1 = tf.contrib.layers.convolution2d(fcm, num_outputs=64, kernel_size=5, stride=4, activation_fn=tf.nn.relu)
 	conv_2 = tf.contrib.layers.convolution2d(conv_1, num_outputs=64, kernel_size=5, stride=4, activation_fn=tf.nn.relu)
