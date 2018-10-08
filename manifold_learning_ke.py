@@ -10,8 +10,8 @@ def create_place_holder(im_h,im_w):
 def manifold_net(input_x):
 
 	x_flatten = tf.contrib.layer.flatten(input_x)
-	output_size = np.int(input_x.shape[1],input_x.shape[2])
-	fc1 = tf.tanh(tf.layers.dense(x_flatten,output_size * 2))
+	output_size = np.int(input_x.shape[1] * input_x.shape[2])
+	fc1 = tf.tanh(tf.layers.dense(x_flatten,output_size))
 	fc2 = tf.tanh(tf.layers.dense(fc1,output_size))
 	fcm = tf.reshape(fc2, [tf.shape(input_x)[0], tf.shape(input_x)[1], tf.shape(input_x)[2], 1])
 
