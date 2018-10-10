@@ -7,7 +7,7 @@ import time
 import math
 import sigpy.plot as pl
 
-X_train,Y_train = generate_input.load_images_from_folder('images/',2000,normalize=True,imrotate=True)
+X_train,Y_train = generate_input.load_images_from_folder('images/',5,normalize=True,imrotate=True)
 
 # np.save('')
 
@@ -91,7 +91,7 @@ def random_mini_batches(x, y, mini_batch_size=64, seed=0):
 def forward_model(X_train,Y_train,learning_rate = 0.0001, num_epochs = 100, minibatch_size = 64, print_cost = True):
     with tf.device('/gpu:0'):
         ops.reset_default_graph()
-        seed = 0
+        seed = 5
         (m,im_h,im_w,channel) = X_train.shape
         X, Y = create_place_holder(im_h, im_w)
         DECONV = manifold_net(X)
@@ -100,7 +100,7 @@ def forward_model(X_train,Y_train,learning_rate = 0.0001, num_epochs = 100, mini
         init = tf.global_variables_initializer()
         saver = tf.train.Saver()
         config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True
+#        config.gpu_options.all_growth = True
         config = tf.ConfigProto(log_device_placement = True)
         with tf.Session(config=config) as sess:
             sess.run(init)
@@ -122,18 +122,19 @@ def forward_model(X_train,Y_train,learning_rate = 0.0001, num_epochs = 100, mini
                     print('EPOCH = ', epoch, 'COST = ', minibatch_loss, 'Elapsed time = ', (toc - tic))
             save_path = saver.save(sess, "model/model_maniflod.ckpt")
             print("Model saved in file: %s" % save_path)
-#            Y_opt = np.array(sess.run(DECONV,feed_dict={X:X_train}))
+            Y_opt = np.array(sess.run(DECONV,feed_dict={X:X_train}))
             #Y_opt = Y_opt.eval(session = sess)
             sess.close()
- #   return Y_opt 
-forward_model(X_train, Y_train,
-                learning_rate=0.00001,
-                num_epochs=3000,
-                minibatch_size=32,  # should be < than the number of input examples
-                print_cost=True)
+    return Y_opt 
 
-#pl.ImagePlot(Y_test)
-#np.save('data.npy',Y_test)
+Y_test = forward_model(X_train, Y_train,
+                          learning_rate=0.00001,
+                          num_epochs=10000,
+                          minibatch_size=2,  # should be < than the number of input examples
+                          print_cost=True)
+
+pl.ImagePlot(Y_test)
+np.save('data.npy',Y_test)
 # Y_test = manifold_net(X_train).eval()
 
 
